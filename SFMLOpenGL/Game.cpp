@@ -31,7 +31,7 @@ uvID;		// UV ID
 
 //Please see .//Assets//Textures// for more textures
 //  col2 for Textured version
-const string filename = "legopattern.tga";
+const string filename = "pattern.tga";
 //const string filenamePat = "pattern.tga";
 
 int width;						// Width of texture
@@ -283,8 +283,9 @@ void Game::initialize()
 
 	m_backPosition = true;
 	// Projection Matrix 
+	m_cameraPosition = glm::vec3(0.0f, 0.0f, 1400.0f);
 	projection = glm::perspective(
-		glm::radians(45.0f),					// Field of View 45 degrees
+		glm::radians(1.f),					// Field of View 1 degree
 		4.0f / 3.0f,			// Aspect ratio
 		0.1f,					// Display Range Min : 0.1f unit
 		1500.0f					// Display Range Max : 100.0f unit
@@ -299,10 +300,9 @@ void Game::initialize()
 
 	// Initialize Positions
 	m_player.objectPosition = vec3{ 0.0f, 0.0f, 0.0f };
-	m_cameraPosition = glm::vec3(-20.0f, 10.0f, 10.0f);			// Behind view
-	 m_jumpSpeed = 0.4f;
-	 m_fallSpeed = 0.4f;
-	 m_rotationSpeed = 2.f;;
+	m_jumpSpeed = 0.4f;
+	m_fallSpeed = 0.4f;
+	m_rotationSpeed = 2.f;;
 
 	 // Setting up original transformations on the game objects-----------------------------------
 	setupPlayer();
@@ -911,7 +911,7 @@ void Game::camera()
 	// Working camera follower --------------------------------------------------------------------------------------------------
 	if (m_count > 10)		// Counter so the screen doesnt swap too quick
 	{
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::T))
+		if (m_controller.m_currentState.LTrigger || sf::Keyboard::isKeyPressed(sf::Keyboard::T))
 		/*if(m_controller.m_currentState.LTrigger)*/
 		{
 			if (m_backPosition == true)
@@ -941,7 +941,7 @@ void Game::camera()
 			m_count = 0;
 
 		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F))// Flat
+		if (m_controller.m_currentState.RTrigger || sf::Keyboard::isKeyPressed(sf::Keyboard::F))// Flat
 		/*if(m_controller.m_currentState.RTrigger)*/
 		{
 			if (m_sidePosition == true)							// Flat view
