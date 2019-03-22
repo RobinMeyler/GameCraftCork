@@ -15,6 +15,8 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
 
+#include <SFML/Audio.hpp>
+
 #include <Debug.h>
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -132,6 +134,13 @@ private:
 	bool m_backPosition{ false };
 	bool m_sidePosition{ true };
 	bool m_won{ false };
+
+	//Sound
+	sf::SoundBuffer bounceBuffer;
+	sf::Sound bounceSound;
+
+	sf::Music musicLoop;
+
 };
 
 #endif  // ! GAME_H
