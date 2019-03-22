@@ -116,6 +116,27 @@ void Game::initialize()
 	GLint isCompiled = 0;
 	GLint isLinked = 0;
 
+	//Sound
+	if (!bounceBuffer.loadFromFile("Assets/Sounds/bounce.wav"))
+	{
+		std::cout << "Bounce not loaded" << std::endl;
+	}
+
+	if (!musicLoop.openFromFile("Assets/Sounds/music.wav"))
+	{
+		std::cout << "Music not loaded" << std::endl;
+	}
+
+	musicLoop.play();
+
+	bounceSound.setBuffer(bounceBuffer);
+
+	
+	bounceSound.setVolume(20.f);
+
+
+
+
 	if (!(!glewInit())) { DEBUG_MSG("glewInit() failed"); }
 
 	// Copy UV's to all faces
@@ -339,6 +360,10 @@ void Game::update()
 #if (DEBUG >= 2)
 	DEBUG_MSG("Updating...");
 #endif
+
+
+
+
 	m_time = m_gameClock.getElapsedTime().asSeconds();
 
 	m_controller.update();
@@ -609,6 +634,7 @@ void Game::handleMovement()
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
 	{
 		m_player.objectRotation.x += 0.1f;
+		
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::X))
 	{
@@ -664,7 +690,9 @@ void Game::handleMovement()
 		if (m_playerJumpState == jumpState::Grounded)
 		{
 			m_playerJumpState = jumpState::Rising;
+			bounceSound.play();
 		}
+		
 	}
 	if (restartCount > 10)
 	{
