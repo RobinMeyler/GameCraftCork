@@ -49,6 +49,7 @@ private:
 
 	// Functions to keep the code readable and easy to navigate
 	void handleMovement();
+
 	void collisions();
 	void camera();
 	void setupPlayer();
@@ -72,6 +73,31 @@ private:
 	GameObject m_enemyCube[4]{ 1,1,1,1 };
 	GameObject m_winCube[2]{ 1,1 };
 
+	GameObject m_particle[100]{ 3,3,3,3,3,
+	3,3,3,3,3 ,
+	3,3,3,3,3 ,
+	3,3,3,3,3,
+	3,3,3,3,3,
+
+	3,3,3,3,3 ,
+	3,3,3,3,3 ,
+	3,3,3,3,3 ,
+	3,3,3,3,3 ,
+	3,3,3,3,3,
+
+	3,3,3,3,3 ,
+	3,3,3,3,3 ,
+	3,3,3,3,3 ,
+	3,3,3,3,3,
+	3,3,3,3,3,
+
+	3,3,3,3,3 ,
+	3,3,3,3,3 ,
+	3,3,3,3,3 ,
+	3,3,3,3,3,
+	3,3,3,3,3,
+
+	};
 	// Camera
 	vec3 m_cameraPosition{ 0.0f, 0.0f, 20.0f };
 
