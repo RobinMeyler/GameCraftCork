@@ -355,12 +355,20 @@ void Game::update()
 		if (m_player.objectPosition.y < m_jumpHeght - 1)
 		{
 			m_player.objectPosition.y += m_jumpSpeed;
-			m_player.objectRotation.z -= m_rotationSpeed;
+			if (fallOff == false)
+			{
+				m_player.objectRotation.y -= m_rotationSpeed;
+				m_player.objectRotation.z -= m_rotationSpeed;
+			}
 		}
 		else if (m_player.objectPosition.y < m_jumpHeght)		// Slower rise to appear to be under gravity
 		{
 			m_player.objectPosition.y += m_jumpSpeed/2;
-			m_player.objectRotation.z -= m_rotationSpeed;
+			if (fallOff == false)
+			{
+				m_player.objectRotation.y -= m_rotationSpeed;
+				m_player.objectRotation.z -= m_rotationSpeed;
+			}
 		}
 		else
 		{
@@ -372,22 +380,38 @@ void Game::update()
 		if (m_player.objectPosition.y > m_jumpHeght - 1)
 		{
 			m_player.objectPosition.y -= m_fallSpeed/2;
-			m_player.objectRotation.z -= m_rotationSpeed;
+			if (fallOff == false)
+			{
+				m_player.objectRotation.y -= m_rotationSpeed;
+				m_player.objectRotation.z -= m_rotationSpeed;
+			}
+			
 		}
 		else if (m_player.objectPosition.y > m_groundLevel)
 		{
 			m_player.objectPosition.y -= m_fallSpeed;
-			m_player.objectRotation.z -= m_rotationSpeed;
+			if (fallOff == false)
+			{
+				m_player.objectRotation.y -= m_rotationSpeed;
+				m_player.objectRotation.z -= m_rotationSpeed;
+			}
 		}
 		else
 		{
+			if (fallOff == false)
+			{
+				m_rotateCounter -= 90;
+				m_player.objectRotation.y = m_rotateCounter;
+				m_player.objectRotation.z = m_rotateCounter;
+
+			}
 			m_playerJumpState = jumpState::Grounded;				// Landed, do resets
-			m_rotateCounter -= 90;
-			m_player.objectRotation.z = m_rotateCounter;
+
 			if (m_groundLevel == 0)
 			{
 				m_player.objectPosition = { m_player.objectPosition.x, 0.f, 0.f };		// No clipping
 			}
+			fallOff = false;
 		}
 	}
 	// Player and world collisions
@@ -727,6 +751,7 @@ void Game::collisions()
 		{
 			m_groundLevel = 0;					// Ground level unless it meets another cube on the way down
 			m_jumpHeght = m_groundLevel + 6;
+			
 		}
 	}
 	// This is called outside because of the break, increase fall speed if the player is high enough
@@ -738,7 +763,9 @@ void Game::collisions()
 			m_fallSpeed = 0.8;
 			m_rotationSpeed = 3;
 			m_collideExtraCheck = 1;
+			
 		}
+		fallOff = true;
 	}
 }
 

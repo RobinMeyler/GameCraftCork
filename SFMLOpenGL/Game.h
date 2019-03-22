@@ -42,6 +42,7 @@ private:
 	vec3 animation = vec3(0.0f);
 	float rotation = 0.0f;
 	bool isRunning = false;
+	bool fallOff = false;
 	void initialize();
 	void update();
 	void render();
