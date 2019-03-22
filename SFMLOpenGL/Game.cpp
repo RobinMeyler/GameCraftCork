@@ -116,6 +116,9 @@ void Game::initialize()
 	GLint isCompiled = 0;
 	GLint isLinked = 0;
 
+
+	
+
 	if (!(!glewInit())) { DEBUG_MSG("glewInit() failed"); }
 
 	// Copy UV's to all faces
@@ -332,6 +335,24 @@ void Game::initialize()
 	font.loadFromFile(".//Assets//Fonts//BBrick.ttf");
 
 	
+	if (!m_backroundTex2.loadFromFile("./Assets/Backrounds/backround2.png"))
+	{
+		std::cout << "error loading backround textures" << std::endl;
+	}
+
+	if (!m_backroundTex1.loadFromFile("./Assets/Backrounds/backround1.png"))
+	{
+		std::cout << "error loading backround textures" << std::endl;
+	}
+
+	if (!m_backroundTex3.loadFromFile("./Assets/Backrounds/backround3.png"))
+	{
+		std::cout << "error loading backround textures" << std::endl;
+	}
+
+	m_backround3.setTexture(m_backroundTex3);
+	m_backround1.setTexture(m_backroundTex1);
+	m_backround2.setTexture(m_backroundTex2);
 }
 
 void Game::update()
@@ -414,6 +435,19 @@ void Game::render()
 	// Save current OpenGL render states
 	window.pushGLStates();
 	// Sf::Text output for the HUD
+	if (m_cameraPosition == glm::vec3(-20.0f, 10.0f, 10.0f))
+	{
+		window.draw(m_backround1);
+	}
+	else if (m_cameraPosition == glm::vec3(0.0f, 10.0f, 30.0f))
+	{
+		window.draw(m_backround2);
+	}
+	else if (m_cameraPosition == glm::vec3(0.0f, 0.0f, 1400.0f))
+	{
+		window.draw(m_backround3);
+	}
+
 	if (m_won != true)
 	{
 		string score = "Score: "
@@ -576,6 +610,8 @@ void Game::render()
 		glUniformMatrix4fv(glGetUniformLocation(progID, "ModelMatrix"), 1, GL_FALSE, &m_enemyCube[i].model[0][0]);
 		glDrawElements(GL_TRIANGLES, 3 * INDICES, GL_UNSIGNED_INT, NULL);
 	}
+
+	
 	window.display();
 
 	// Disable Arrays
@@ -756,8 +792,8 @@ void Game::camera()
 	// Working camera follower --------------------------------------------------------------------------------------------------
 	if (m_count > 10)		// Counter so the screen doesnt swap too quick
 	{
-		/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::T))*/
-		if(m_controller.m_currentState.LTrigger)
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::T))
+		/*if(m_controller.m_currentState.LTrigger)*/
 		{
 			if (m_backPosition == true)
 			{
@@ -786,8 +822,8 @@ void Game::camera()
 			m_count = 0;
 
 		}
-		/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::F))*/// Flat
-		if(m_controller.m_currentState.RTrigger)
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F))// Flat
+		/*if(m_controller.m_currentState.RTrigger)*/
 		{
 			if (m_sidePosition == true)							// Flat view
 			{

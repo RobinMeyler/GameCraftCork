@@ -47,6 +47,14 @@ private:
 	void render();
 	void unload();
 
+	sf::Texture m_backroundTex1;
+	sf::Texture m_backroundTex2;
+	sf::Texture m_backroundTex3;
+	sf::Sprite m_backround1;
+	sf::Sprite m_backround2;
+	sf::Sprite m_backround3;
+
+
 	// Functions to keep the code readable and easy to navigate
 	void handleMovement();
 	void collisions();
