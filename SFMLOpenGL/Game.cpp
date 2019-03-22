@@ -3,6 +3,7 @@
 #include <Game.h>
 #include <Cube.h>
 #include <Easing.h>
+#include <Controller.h>
 
 // Helper to convert Number to String for HUD
 template <typename T>
@@ -41,6 +42,8 @@ mat4 projection,
 view(1.f);			// View, Projection
 
 Font font;						// Game font
+
+Xbox360Controller m_controller;
 
 Game::Game() :
 	window(VideoMode(800, 600),
@@ -327,6 +330,8 @@ void Game::initialize()
 
 	// Load Font
 	font.loadFromFile(".//Assets//Fonts//BBrick.ttf");
+
+	
 }
 
 void Game::update()
@@ -335,6 +340,8 @@ void Game::update()
 	DEBUG_MSG("Updating...");
 #endif
 	m_time = m_gameClock.getElapsedTime().asSeconds();
+
+	m_controller.update();
 
 	// Controls all input for the game except camera changes
 	handleMovement();
@@ -651,7 +658,8 @@ void Game::handleMovement()
 		//m_player.objectPosition -= glm::vec3(0.0f, 0.f, 0.02f);
 	}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))		// Toward the camera
+	/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))*/	
+	if (m_controller.m_currentState.A)	// Toward the camera
 	{
 		if (m_playerJumpState == jumpState::Grounded)
 		{
@@ -660,7 +668,8 @@ void Game::handleMovement()
 	}
 	if (restartCount > 10)
 	{
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))		// Toward the camera
+		/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))*/		// Toward the camera
+		if(m_controller.m_currentState.Back)
 		{
 			restart();
 			restartCount = 0;
@@ -747,7 +756,8 @@ void Game::camera()
 	// Working camera follower --------------------------------------------------------------------------------------------------
 	if (m_count > 10)		// Counter so the screen doesnt swap too quick
 	{
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::T))
+		/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::T))*/
+		if(m_controller.m_currentState.LTrigger)
 		{
 			if (m_backPosition == true)
 			{
@@ -776,7 +786,8 @@ void Game::camera()
 			m_count = 0;
 
 		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F))			// Flat
+		/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::F))*/// Flat
+		if(m_controller.m_currentState.RTrigger)
 		{
 			if (m_sidePosition == true)							// Flat view
 			{
