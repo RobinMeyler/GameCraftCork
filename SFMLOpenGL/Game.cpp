@@ -31,7 +31,7 @@ uvID;		// UV ID
 
 //Please see .//Assets//Textures// for more textures
 //  col2 for Textured version
-const string filename = "pattern.tga";
+const string filename = "legopattern.tga";
 //const string filenamePat = "pattern.tga";
 
 int width;						// Width of texture
@@ -783,7 +783,7 @@ void Game::handleMovement()
 	}
 
 	/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))*/	
-	if (m_controller.m_currentState.A)	// Toward the camera
+	if (m_controller.m_currentState.A || sf::Keyboard::isKeyPressed(sf::Keyboard::Space))	// Toward the camera
 	{
 		if (m_playerJumpState == jumpState::Grounded)
 		{
