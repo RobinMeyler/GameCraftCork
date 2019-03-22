@@ -119,7 +119,7 @@ void Game::initialize()
 	GLint isCompiled = 0;
 	GLint isLinked = 0;
 	
-	//Sound
+ 	//Sound
 	if (!bounceBuffer.loadFromFile("Assets/Sounds/bounce.wav"))
 	{
 		std::cout << "Bounce not loaded" << std::endl;
