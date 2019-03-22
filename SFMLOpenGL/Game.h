@@ -15,6 +15,8 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
 
+#include <SFML/Audio.hpp>
+
 #include <Debug.h>
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -42,6 +44,7 @@ private:
 	vec3 animation = vec3(0.0f);
 	float rotation = 0.0f;
 	bool isRunning = false;
+	bool fallOff = false;
 	void initialize();
 	void update();
 	void render();
@@ -57,6 +60,7 @@ private:
 
 	// Functions to keep the code readable and easy to navigate
 	void handleMovement();
+
 	void collisions();
 	void camera();
 	void setupPlayer();
@@ -80,6 +84,31 @@ private:
 	GameObject m_enemyCube[4]{ 1,1,1,1 };
 	GameObject m_winCube[2]{ 1,1 };
 
+	GameObject m_particle[100]{ 3,3,3,3,3,
+	3,3,3,3,3 ,
+	3,3,3,3,3 ,
+	3,3,3,3,3,
+	3,3,3,3,3,
+
+	3,3,3,3,3 ,
+	3,3,3,3,3 ,
+	3,3,3,3,3 ,
+	3,3,3,3,3 ,
+	3,3,3,3,3,
+
+	3,3,3,3,3 ,
+	3,3,3,3,3 ,
+	3,3,3,3,3 ,
+	3,3,3,3,3,
+	3,3,3,3,3,
+
+	3,3,3,3,3 ,
+	3,3,3,3,3 ,
+	3,3,3,3,3 ,
+	3,3,3,3,3,
+	3,3,3,3,3,
+
+	};
 	// Camera
 	vec3 m_cameraPosition{ 0.0f, 0.0f, 20.0f };
 
@@ -114,6 +143,13 @@ private:
 	bool m_backPosition{ false };
 	bool m_sidePosition{ true };
 	bool m_won{ false };
+
+	//Sound
+	sf::SoundBuffer bounceBuffer;
+	sf::Sound bounceSound;
+
+	sf::Music musicLoop;
+
 };
 
 #endif  // ! GAME_H

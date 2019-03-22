@@ -9,6 +9,10 @@ GameObject::GameObject(int t_type) :
 	{
 		vertexRec[i] = verticesRec[i];
 	}
+	for (int i = 0; i < 72; i++)
+	{
+		vertexPart[i] = verticesParticle[i];
+	}
 	// Copy the Cube contents into GameObject
 	if (t_type == 1)
 	{
@@ -17,6 +21,10 @@ GameObject::GameObject(int t_type) :
 	else if (t_type == 2)
 	{
 		memcpy(vertexRec, vertexRec, sizeof(vertexRec));
+	}
+	else if (t_type == 3)
+	{
+		memcpy(vertexPart, vertexPart, sizeof(vertexPart));
 	}
 	memcpy(this->color, colors, sizeof(this->color));
 	memcpy(this->uv, uvs, sizeof(this->uv));
@@ -56,7 +64,12 @@ GLfloat* GameObject::getVertex() {
 	else if (type == 2)
 	{
 		return this->vertexRec;
-	} }
+	} 
+	else if (type == 3)
+	{
+		return this->vertexPart;
+	}
+}
 // 3 Vertices
 int GameObject::getVertexCount() { return ARRAY_SIZE(vertex) / 3; }
 

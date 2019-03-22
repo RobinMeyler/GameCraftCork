@@ -9,6 +9,7 @@
 #include <string.h>
 #include <Cube.h>
 #include <Rectangle.h>
+#include <Particle.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -21,6 +22,7 @@ private:
 	// Cube Elements
 	GLfloat vertex[ARRAY_SIZE(vertices)];
 	GLfloat vertexRec[72];
+	GLfloat vertexPart[72];
 	GLfloat color[ARRAY_SIZE(colors)];
 	GLfloat uv[ARRAY_SIZE(uvs)];
 	GLfloat index[ARRAY_SIZE(indices)];
@@ -41,6 +43,7 @@ public:
 	vec3 objectRotation{ 0.f };
 	vec3 objectScale{ 1.f };
 
+	vec3 particleSpawnPosition{ 0.f };
 	mat4 model;
 
 	vec3 getPosition();

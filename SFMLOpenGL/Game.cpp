@@ -3,6 +3,8 @@
 #include <Game.h>
 #include <Cube.h>
 #include <Easing.h>
+
+#include <ctime>
 #include <Controller.h>
 
 // Helper to convert Number to String for HUD
@@ -25,6 +27,7 @@ GLint	positionID,	// Position ID
 colorID,	// Color ID
 textureID,	// Texture ID
 uvID;		// UV ID
+
 
 //Please see .//Assets//Textures// for more textures
 //  col2 for Textured version
@@ -115,9 +118,24 @@ void Game::initialize()
 	isRunning = true;
 	GLint isCompiled = 0;
 	GLint isLinked = 0;
+	
+	//Sound
+	if (!bounceBuffer.loadFromFile("Assets/Sounds/bounce.wav"))
+	{
+		std::cout << "Bounce not loaded" << std::endl;
+	}
 
+	if (!musicLoop.openFromFile("Assets/Sounds/music.wav"))
+	{
+		std::cout << "Music not loaded" << std::endl;
+	}
+
+	musicLoop.play();
+
+	bounceSound.setBuffer(bounceBuffer);
 
 	
+	bounceSound.setVolume(20.f);
 
 	if (!(!glewInit())) { DEBUG_MSG("glewInit() failed"); }
 
@@ -310,6 +328,19 @@ void Game::initialize()
 		m_winCube[i].model = glm::rotate(m_winCube[i].model, glm::radians(m_winCube[i].objectRotation.y), glm::vec3(0.f, 1.0f, 0.f));
 		m_winCube[i].model = glm::rotate(m_winCube[i].model, glm::radians(m_winCube[i].objectRotation.z), glm::vec3(0.f, 0.f, 1.f));
 	}
+
+	for (int i = 0; i < 100; i++)
+	{
+		m_particle[i].particleSpawnPosition = m_player.objectPosition;
+		m_particle[i].objectRotation = { 0.f, 0.f, 0.f };
+		m_particle[i].objectScale = { 0.6f, 0.6f, 0.6f };
+		m_particle[i].model = glm::mat4(1.f);
+		m_particle[i].model = glm::translate(m_particle[i].model, m_player.objectPosition);
+		m_particle[i].model = glm::rotate(m_particle[i].model, glm::radians(m_particle[i].objectRotation.x), glm::vec3(1.f, 0.f, 0.f));
+		m_particle[i].model = glm::rotate(m_particle[i].model, glm::radians(m_particle[i].objectRotation.y), glm::vec3(0.f, 1.0f, 0.f));
+		m_particle[i].model = glm::rotate(m_particle[i].model, glm::radians(m_particle[i].objectRotation.z), glm::vec3(0.f, 0.f, 1.f));
+	}
+	
 	m_enemyCube[0].objectPosition = vec3{ 175, 0.f,0.f };
 	m_enemyCube[1].objectPosition = vec3{ 175, 2.f,0.f };
 	m_enemyCube[2].objectPosition = vec3{ 40, 0.f,0.f };
@@ -360,16 +391,42 @@ void Game::update()
 #if (DEBUG >= 2)
 	DEBUG_MSG("Updating...");
 #endif
+
+
 	m_time = m_gameClock.getElapsedTime().asSeconds();
+	srand(std::time(nullptr));
 
 	m_controller.update();
-
 	// Controls all input for the game except camera changes
 	handleMovement();
 
 	// Constant forward movement of the player for the game
 	m_player.objectPosition.x += 0.25;
 	
+	for (int i(0); i < 100; i++)
+	{
+		float random = rand() % 3;
+		if (m_particle[i].objectPosition.x > m_particle[i].particleSpawnPosition.x - (rand() % 10 + 5))
+		{
+			m_particle[i].objectPosition.x -= 0.25;
+			m_particle[i].objectPosition.y += random/10;
+		}
+		else
+		{
+			m_particle[i].objectPosition = m_player.objectPosition;
+			m_particle[i].particleSpawnPosition = m_player.objectPosition;
+		}
+	}
+
+	for (int i(0); i < 100; i++)
+	{
+		m_particle[i].model = glm::mat4(1.f);
+		m_particle[i].model = glm::translate(m_particle[i].model, m_particle[i].objectPosition);
+		m_particle[i].model = glm::rotate(m_particle[i].model, glm::radians(m_particle[i].objectRotation.x), glm::vec3(1.f, 0.f, 0.f));
+		m_particle[i].model = glm::rotate(m_particle[i].model, glm::radians(m_particle[i].objectRotation.y), glm::vec3(0.f, 1.0f, 0.f));
+		m_particle[i].model = glm::rotate(m_particle[i].model, glm::radians(m_particle[i].objectRotation.z), glm::vec3(0.f, 0.f, 1.f));
+		m_particle[i].model = glm::scale(m_particle[i].model, m_particle[i].objectScale);
+	}
 	// Player jumping stages/states
 	if (m_playerJumpState == jumpState::Grounded)
 	{
@@ -383,12 +440,20 @@ void Game::update()
 		if (m_player.objectPosition.y < m_jumpHeght - 1)
 		{
 			m_player.objectPosition.y += m_jumpSpeed;
-			m_player.objectRotation.z -= m_rotationSpeed;
+			if (fallOff == false)
+			{
+				m_player.objectRotation.y -= m_rotationSpeed;
+				m_player.objectRotation.z -= m_rotationSpeed;
+			}
 		}
 		else if (m_player.objectPosition.y < m_jumpHeght)		// Slower rise to appear to be under gravity
 		{
 			m_player.objectPosition.y += m_jumpSpeed/2;
-			m_player.objectRotation.z -= m_rotationSpeed;
+			if (fallOff == false)
+			{
+				m_player.objectRotation.y -= m_rotationSpeed;
+				m_player.objectRotation.z -= m_rotationSpeed;
+			}
 		}
 		else
 		{
@@ -400,22 +465,38 @@ void Game::update()
 		if (m_player.objectPosition.y > m_jumpHeght - 1)
 		{
 			m_player.objectPosition.y -= m_fallSpeed/2;
-			m_player.objectRotation.z -= m_rotationSpeed;
+			if (fallOff == false)
+			{
+				m_player.objectRotation.y -= m_rotationSpeed;
+				m_player.objectRotation.z -= m_rotationSpeed;
+			}
+			
 		}
 		else if (m_player.objectPosition.y > m_groundLevel)
 		{
 			m_player.objectPosition.y -= m_fallSpeed;
-			m_player.objectRotation.z -= m_rotationSpeed;
+			if (fallOff == false)
+			{
+				m_player.objectRotation.y -= m_rotationSpeed;
+				m_player.objectRotation.z -= m_rotationSpeed;
+			}
 		}
 		else
 		{
+			if (fallOff == false)
+			{
+				m_rotateCounter -= 90;
+				m_player.objectRotation.y = m_rotateCounter;
+				m_player.objectRotation.z = m_rotateCounter;
+
+			}
 			m_playerJumpState = jumpState::Grounded;				// Landed, do resets
-			m_rotateCounter -= 90;
-			m_player.objectRotation.z = m_rotateCounter;
+
 			if (m_groundLevel == 0)
 			{
 				m_player.objectPosition = { m_player.objectPosition.x, 0.f, 0.f };		// No clipping
 			}
+			fallOff = false;
 		}
 	}
 	// Player and world collisions
@@ -596,6 +677,12 @@ void Game::render()
 		glDrawElements(GL_TRIANGLES, 3 * INDICES, GL_UNSIGNED_INT, NULL);
 	}
 
+	for (int i = 0; i < 100; i++)
+	{
+		glBufferSubData(GL_ARRAY_BUFFER, 0 * VERTICES * sizeof(GLfloat), 3 * VERTICES * sizeof(GLfloat), m_particle[i].getVertex());	// They are all the same size
+		glUniformMatrix4fv(glGetUniformLocation(progID, "ModelMatrix"), 1, GL_FALSE, &m_particle[i].model[0][0]);
+		glDrawElements(GL_TRIANGLES, 3 * INDICES, GL_UNSIGNED_INT, NULL);
+	}
 	// Drawing Ground rectangles
 	for (int i = 0; i < 4; i++)
 	{
@@ -645,6 +732,7 @@ void Game::handleMovement()
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
 	{
 		m_player.objectRotation.x += 0.1f;
+		
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::X))
 	{
@@ -700,7 +788,9 @@ void Game::handleMovement()
 		if (m_playerJumpState == jumpState::Grounded)
 		{
 			m_playerJumpState = jumpState::Rising;
+			bounceSound.play();
 		}
+		
 	}
 	if (restartCount > 10)
 	{
@@ -712,7 +802,9 @@ void Game::handleMovement()
 		}
 	}
 	restartCount++;
+	
 }
+
 
 void Game::collisions()
 {
@@ -772,6 +864,7 @@ void Game::collisions()
 		{
 			m_groundLevel = 0;					// Ground level unless it meets another cube on the way down
 			m_jumpHeght = m_groundLevel + 6;
+			
 		}
 	}
 	// This is called outside because of the break, increase fall speed if the player is high enough
@@ -783,7 +876,9 @@ void Game::collisions()
 			m_fallSpeed = 0.8;
 			m_rotationSpeed = 3;
 			m_collideExtraCheck = 1;
+			
 		}
+		fallOff = true;
 	}
 }
 
