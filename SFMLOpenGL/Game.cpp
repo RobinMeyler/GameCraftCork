@@ -125,6 +125,21 @@ void Game::initialize()
 		std::cout << "Bounce not loaded" << std::endl;
 	}
 
+	if (!pointsBuffer.loadFromFile("Assets/Sounds/points.wav"))
+	{
+		std::cout << "Points Sound not loaded" << std::endl;
+	}
+
+	if (!crashBuffer.loadFromFile("Assets/Sounds/crash.wav"))
+	{
+		std::cout << "crash Sound not loaded" << std::endl;
+	}
+
+	if (!victoryBuffer.loadFromFile("Assets/Sounds/victory.wav"))
+	{
+		std::cout << "victory Sound not loaded" << std::endl;
+	}
+
 	if (!musicLoop.openFromFile("Assets/Sounds/music.wav"))
 	{
 		std::cout << "Music not loaded" << std::endl;
@@ -132,6 +147,9 @@ void Game::initialize()
 
 	musicLoop.play();
 
+	victorySound.setBuffer(victoryBuffer);
+	crashSound.setBuffer(crashBuffer);
+	pointsSound.setBuffer(pointsBuffer);
 	bounceSound.setBuffer(bounceBuffer);
 
 	
@@ -817,6 +835,7 @@ void Game::collisions()
 		{
 			m_winCube[i].isHit = true;
 			m_won = true;
+			victorySound.play();
 		}
 	}
 	// Player to Enemy block 
@@ -825,6 +844,7 @@ void Game::collisions()
 		bool enemyCol = checkCollision(m_player, m_enemyCube[i]);
 		if (enemyCol == true)
 		{
+			crashSound.play();
 			restart();
 		}
 	}
@@ -834,12 +854,15 @@ void Game::collisions()
 		bool goalcollide = checkCollision(m_player, m_goalCube[i]);
 		if (goalcollide == true)
 		{
+			pointsSound.play();
+
 			m_goalCube[i].isHit = true;
 			m_score++;
 			m_goalCube[i].objectPosition = vec3{ 92.0f, 1000.0f, 0.0f };
 			m_goalCube[i].model = glm::mat4(1.f);
 			m_goalCube[i].model = glm::translate(m_goalCube[i].model, m_goalCube[i].objectPosition);
 		}
+		
 	}
 	// Player and objects game cubes
 	bool collide{ false };
@@ -856,6 +879,7 @@ void Game::collisions()
 			}
 			else
 			{
+				crashSound.play();
  				restart();			// If its the side or bottom, restart
 			}
 			break;

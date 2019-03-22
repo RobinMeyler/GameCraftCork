@@ -148,6 +148,15 @@ private:
 	sf::SoundBuffer bounceBuffer;
 	sf::Sound bounceSound;
 
+	sf::SoundBuffer pointsBuffer;
+	sf::Sound pointsSound;
+
+	sf::SoundBuffer crashBuffer;
+	sf::Sound crashSound;
+
+	sf::SoundBuffer victoryBuffer;
+	sf::Sound victorySound;
+
 	sf::Music musicLoop;
 
 };
